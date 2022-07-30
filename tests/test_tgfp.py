@@ -7,13 +7,14 @@ from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
 
 # pylint: disable=redefined-outer-name
 @pytest.fixture
-def tgfp_db():
+def tgfp_db(mocker):
     """
     This will return the default tgfp database object loaded with the test fixture
 
     :return: tgfp database object
     :rtype: TGFP
     """
+    mocker.patch("tgfp.TGFP.current_season", return_value=2019)
     return TGFP()
 
 
@@ -112,7 +113,7 @@ def tgfp_db_reg_season_d(tgfp_db_reg_season):
 # pylint: disable=missing-function-docstring
 def test_games(tgfp_db):
     games = tgfp_db.games()
-    assert len(games) == 267
+    assert len(games) == 1078
     assert isinstance(games[0], TGFPGame)
 
 
@@ -124,13 +125,13 @@ def test_teams(tgfp_db):
 
 def test_picks(tgfp_db):
     picks = tgfp_db.picks()
-    assert len(picks) == 441
+    assert len(picks) == 1732
     assert isinstance(picks[0], TGFPPick)
 
 
 def test_players(tgfp_db):
     picks = tgfp_db.players()
-    assert len(picks) == 27
+    assert len(picks) == 28
     assert isinstance(picks[0], TGFPPlayer)
 
 
@@ -175,24 +176,24 @@ def test_find_players(tgfp_db):
     I should test all these conditions
     """
     # should find all players
-    assert len(tgfp_db.find_players()) == 27
+    assert len(tgfp_db.find_players()) == 28
     found_players = tgfp_db.find_players(player_id=ObjectId('59a97660ee45e20848e119aa'))
     assert len(found_players) == 1
-    assert found_players[0].email == 'john.sturgeon@gmail.com'
-    found_players = tgfp_db.find_players(player_email='wkahl22@gmail.com')
+    assert found_players[0].email == 'john.sturgeon@redacted.com'
+    found_players = tgfp_db.find_players(player_email='will.kahl@redacted.com')
     assert len(found_players) == 1
     assert found_players[0].id == ObjectId('59ab2fb5ee45e20848e119d6')
-    found_players = tgfp_db.find_players(discord_id=609144199618494483)
+    found_players = tgfp_db.find_players(discord_id=60914419961849448)
     assert len(found_players) == 1
-    assert found_players[0].email == 'jamesvanboxtel@gmail.com'
+    assert found_players[0].email == 'james.van.boxtel@redacted.com'
     found_players = tgfp_db.find_players(player_active=False)
     assert len(found_players) == 5
     found_players = tgfp_db.find_players(ordered_by='total_points')
-    assert len(found_players) == 27
+    assert len(found_players) == 28
     assert found_players[0].total_points() == 0  # last place
     assert found_players[-1].total_points() == 195  # first place
     found_players = tgfp_db.find_players(ordered_by='total_points', reverse_order=True)
-    assert len(found_players) == 27
+    assert len(found_players) == 28
     assert found_players[0].total_points() == 195  # first place
     assert found_players[-1].total_points() == 0  # last place
 
@@ -216,6 +217,8 @@ def test_find_picks(tgfp_db):
     found_picks = tgfp_db.find_picks(week_no=1)
     assert len(found_picks) == 22
     found_picks = tgfp_db.find_picks(season=2020)
+    assert len(found_picks) == 420
+    found_picks = tgfp_db.find_picks(season=2000)
     assert len(found_picks) == 0
     found_picks = tgfp_db.find_picks(season=2019)
     assert len(found_picks) == 441
@@ -237,10 +240,16 @@ def test_find_games(tgfp_db):
     found_games = tgfp_db.find_games(season=2019)
     assert len(found_games) == 267
     found_games = tgfp_db.find_games(season=2018)
+    assert len(found_games) == 254
+    found_games = tgfp_db.find_games(season=2020)
+    assert len(found_games) == 268
+    found_games = tgfp_db.find_games(season=2021)
+    assert len(found_games) == 289
+    found_games = tgfp_db.find_games(season=2000)
     assert len(found_games) == 0
     found_games = tgfp_db.find_games(season=2019, week_no=15)
     assert len(found_games) == 16
-    found_games = tgfp_db.find_games(season=2018, week_no=15)
+    found_games = tgfp_db.find_games(season=2000, week_no=15)
     assert len(found_games) == 0
     found_games = tgfp_db.find_games(home_team_id=ObjectId("59ac8f24ee45e20848e11a80"))
     assert len(found_games) == 8

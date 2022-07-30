@@ -1,0 +1,13 @@
+name: Build Docker and Run Test
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create mongoDB Docker container
+      run: sudo docker compose -f docker-compose-test.yaml up

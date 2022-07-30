@@ -38,6 +38,7 @@ class TGFP:
 
         self.mongoclient: MongoClient = MongoClient(
             host=os.environ.get('MONGO_HOST'),
+            port=int(os.environ.get('MONGO_PORT')),
             username=os.environ.get('MONGO_USERNAME'),
             password=os.environ.get('MONGO_PASSWORD'),
             authSource=os.environ.get('MONGO_AUTH_DB')
