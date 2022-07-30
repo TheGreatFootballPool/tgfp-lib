@@ -1,0 +1,5 @@
+FROM mongo:latest
+
+COPY mongodb-init-scripts/01_seed-data.js /docker-entrypoint-initdb.d/
+COPY mongodb-init-scripts/02_load_data.sh /docker-entrypoint-initdb.d/
+COPY tests/data/dump /data/

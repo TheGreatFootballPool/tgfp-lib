@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Docker Compose: Test" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="envFilePath" value="$PROJECT_DIR$/tst.env" />
+        <option name="services">
+          <list>
+            <option value="tgfp-test-mongodb" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="docker-compose-tst.yaml" />
+      </settings>
+    </deployment>
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Doppler: Create 'tst'  .env" run_configuration_type="ShConfigurationType" />
+    </method>
+  </configuration>
+</component>

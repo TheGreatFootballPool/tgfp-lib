@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  tgfp-dev-mongodb:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-Dev
+    container_name: tgfp-dev-mongodb
+    ports:
+      - "${MONGO_PORT}:27017"
