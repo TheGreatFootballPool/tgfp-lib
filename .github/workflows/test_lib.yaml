@@ -16,7 +16,7 @@ jobs:
     - name: Create mongoDB Docker container
       run: sudo docker build -t test_mongo_tgfp -f Dockerfile-Tst .
     - name: Run docker container
-      run: 0lh
+      run: sudo docker run -d -p ${{ secrets.MONGO_PORT }}:27017 test_mongo_tgfp
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
