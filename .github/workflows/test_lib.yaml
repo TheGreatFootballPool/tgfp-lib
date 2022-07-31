@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create mongoDB Docker container
       run: |
-        sudo docker build -t test_mongo_tgfp -f Dockerfile-Tst
+        sudo docker build -t test_mongo_tgfp -f Dockerfile-Tst .
         sudo docker run -d \
         -p ${{ secrets.MONGO_PORT }}:27017 \
         test_mongo_tgfp
