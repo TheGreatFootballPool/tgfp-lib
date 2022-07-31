@@ -8,6 +8,12 @@ on:
 
 env:
   MONGO_PORT: ${{ secrets.MONGO_PORT }}
+  PYTHONPATH: ./tgfp_lib
+  MONGO_HOST: ${{ secrets.MONGO_HOST }}
+  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+  MONGO_AUTH_DB: ${{ secrets.MONGO_AUTH_DB }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,6 +35,4 @@ jobs:
         pip install -r dev_requirements.txt
     - name: Run pytest
       run: |
-        echo "PYTHONPATH=./tgfp_lib" >> $GITHUB_ENV
-        echo "${MONGO_PORT}" > m.port
-        cat m.port
+
