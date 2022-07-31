@@ -1,8 +1,5 @@
 name: Build Docker and Run Test
 
-env:
-  MONGO_PORT: ${{ secrets.MONGO_PORT }}
-
 on:
   push:
     branches: [ main ]
@@ -14,4 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Create mongoDB Docker container
-      run: sudo docker compose -f docker-compose-tst.yaml up -d
+      run: |
+        sudo docker compose -f docker-compose-tst.yaml up -d \
+        -e MONGO_PORT=${{ secrets.MONGO_PORT }}
