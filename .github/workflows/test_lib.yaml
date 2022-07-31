@@ -35,4 +35,5 @@ jobs:
         pip install -r dev_requirements.txt
     - name: Run pytest
       run: |
+        pytest tests
 
