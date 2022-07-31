@@ -7,9 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      MONGO_PORT: ${{ secrets.MONGO_PORT }}
     steps:
     - uses: actions/checkout@v2
     - name: Create mongoDB Docker container
       run: sudo docker compose -f docker-compose-tst.yaml up -d
+      env:
+        MONGO_PORT: ${{ secrets.MONGO_PORT }}
