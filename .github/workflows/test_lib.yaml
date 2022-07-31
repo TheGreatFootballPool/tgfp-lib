@@ -32,7 +32,3 @@ jobs:
         echo "PYTHONPATH=./tgfp_lib" >> $GITHUB_ENV
         echo "${MONGO_PORT}" > m.port
         cat m.port
-    - name: Run pytest
-
-
-
