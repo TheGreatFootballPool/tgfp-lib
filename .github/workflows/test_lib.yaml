@@ -7,22 +7,14 @@ on:
     branches: [ main ]
 
 env:
-  MONGO_PORT: ${{ secrets.MONGO_PORT }}
   PYTHONPATH: ./tgfp_lib
-  MONGO_HOST: ${{ secrets.MONGO_HOST }}
-  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-  MONGO_AUTH_DB: ${{ secrets.MONGO_AUTH_DB }}
+  MONGO_URI: ${{ secrets.MONGO_URI }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Create mongoDB Docker container
-      run: sudo docker build -t test_mongo_tgfp -f Dockerfile-Tst .
-    - name: Run docker container
-      run: sudo docker run -d -p ${{ secrets.MONGO_PORT }}:27017 test_mongo_tgfp
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:

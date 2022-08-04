@@ -36,13 +36,7 @@ class TGFP:
         self._home_page_text = ""
         self._current_season = 0
 
-        self.mongoclient: MongoClient = MongoClient(
-            host=os.environ.get('MONGO_HOST'),
-            port=int(os.environ.get('MONGO_PORT')),
-            username=os.environ.get('MONGO_USERNAME'),
-            password=os.environ.get('MONGO_PASSWORD'),
-            authSource=os.environ.get('MONGO_AUTH_DB')
-        )
+        self.mongoclient: MongoClient = MongoClient(os.getenv('MONGO_URI'))
 
         self.mongodb = self.mongoclient['tgfp']
         self._home_page_text = None
