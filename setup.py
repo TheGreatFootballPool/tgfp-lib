@@ -9,7 +9,7 @@ with open('requirements.txt', encoding='utf8') as f:
 
 setup(
     name='tgfp-lib',
-    version='1.0.1',
+    version='1.1.0',
     packages=['tgfp_lib'],
     python_requires='>=3.10.*',
     url='https://github.com/johnsturgeon/tgfp-lib',
