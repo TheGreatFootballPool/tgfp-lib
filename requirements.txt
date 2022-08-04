@@ -1,3 +1,2 @@
-setuptools==63.4.1
 pytz~=2022.1
 pymongo~=4.2.0
