@@ -27,7 +27,7 @@ def game(tgfp_db: TGFP) -> TGFPGame:
 
 @pytest.fixture
 def west_coast_game(tgfp_db: TGFP) -> TGFPGame:
-    return tgfp_db.find_games(yahoo_game_id='nfl.g.20190922025')[0]
+    return tgfp_db.find_games(tgfp_nfl_game_id='nfl.g.20190922025')[0]
 
 
 def test_tgfpgame(game: TGFPGame):

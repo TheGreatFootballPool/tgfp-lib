@@ -196,15 +196,15 @@ class TGFP:
 
         return found_players
 
-    def find_teams(self, team_id=None, yahoo_team_id=None) -> List[TGFPTeam]:
-        """ find a list of TGFPTeams given input filter team_id and or yahoo_team_id """
+    def find_teams(self, team_id=None, tgfp_nfl_team_id=None) -> List[TGFPTeam]:
+        """ find a list of TGFPTeams given input filter team_id and or tgfp_nfl_team_id """
         found_teams = []
         team: TGFPTeam
         for team in self.teams():
             found = True
             if team_id and team_id != team.id:
                 found = False
-            if yahoo_team_id and yahoo_team_id != team.yahoo_team_id:
+            if tgfp_nfl_team_id and tgfp_nfl_team_id != team.tgfp_nfl_team_id:
                 found = False
             if found:
                 found_teams.append(team)
@@ -238,7 +238,7 @@ class TGFP:
     def find_games(
             self,
             game_id=None,
-            yahoo_game_id=None,
+            tgfp_nfl_game_id=None,
             week_no=None,
             season=None,
             home_team_id=None,
@@ -257,7 +257,7 @@ class TGFP:
             found = True
             if game_id and game_id != game.id:
                 found = False
-            if yahoo_game_id and yahoo_game_id != game.yahoo_game_id:
+            if tgfp_nfl_game_id and tgfp_nfl_game_id != game.tgfp_nfl_game_id:
                 found = False
             if week_no and week_no != game.week_no:
                 found = False
@@ -293,7 +293,7 @@ class TGFPTeam:
         self.wins = int(data['wins'])
         self.losses = int(data['losses'])
         self.ties = int(data['ties'])
-        self.yahoo_team_id = data['yahoo_team_id']
+        self.tgfp_nfl_team_id = data['tgfp_nfl_team_id']
         self.logo_url = data['logo_url']
         self.full_name = self.city + ' ' + self.long_name
 
@@ -459,7 +459,7 @@ class TGFPGame:
             self.start_time = data['start_time']
             self.week_no = data['week_no']
             self.season = data['season']
-            self.yahoo_game_id = data['yahoo_game_id']
+            self.tgfp_nfl_game_id = data['tgfp_nfl_game_id']
 
     def mongo_data(self):
         filtered_dict = {}
@@ -472,7 +472,7 @@ class TGFPGame:
     def save(self):
         result = self._tgfp.mongodb.games.update_one(
             {
-                "yahoo_game_id": self.yahoo_game_id
+                "tgfp_nfl_game_id": self.tgfp_nfl_game_id
             },
             {"$set": self.mongo_data()},
             upsert=True
@@ -480,7 +480,7 @@ class TGFPGame:
         if result.upserted_id:
             self._id = result.upserted_id
         else:
-            found_games = self._tgfp.find_games(yahoo_game_id=self.yahoo_game_id)
+            found_games = self._tgfp.find_games(tgfp_nfl_game_id=self.tgfp_nfl_game_id)
             found_game: TGFPGame
             found_game = found_games[0]
             self._id = found_game.id
