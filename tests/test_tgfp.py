@@ -179,13 +179,13 @@ def test_find_players(tgfp_db):
     assert len(tgfp_db.find_players()) == 28
     found_players = tgfp_db.find_players(player_id=ObjectId('59a97660ee45e20848e119aa'))
     assert len(found_players) == 1
-    assert found_players[0].email == 'john.sturgeon@redacted.com'
-    found_players = tgfp_db.find_players(player_email='will.kahl@redacted.com')
+    assert found_players[0].email == 'john.sturgeon@gmail.com'
+    found_players = tgfp_db.find_players(player_email='wkahl22@gmail.com')
     assert len(found_players) == 1
     assert found_players[0].id == ObjectId('59ab2fb5ee45e20848e119d6')
-    found_players = tgfp_db.find_players(discord_id=60914419961849448)
+    found_players = tgfp_db.find_players(discord_id=609144199618494483)
     assert len(found_players) == 1
-    assert found_players[0].email == 'james.van.boxtel@redacted.com'
+    assert found_players[0].email == 'jamesvanboxtel@gmail.com'
     found_players = tgfp_db.find_players(player_active=False)
     assert len(found_players) == 5
     found_players = tgfp_db.find_players(ordered_by='total_points')

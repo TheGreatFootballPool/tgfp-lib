@@ -42,7 +42,7 @@ def player(tgfp_db):
 
 @pytest.fixture()
 def player_inactive(tgfp_db: TGFP):
-    return tgfp_db.find_players(player_email='james.van.boxtel@redacted.com')[0]
+    return tgfp_db.find_players(player_email='jamesvanboxtel@gmail.com')[0]
 
 
 def test_player(tgfp_db):
