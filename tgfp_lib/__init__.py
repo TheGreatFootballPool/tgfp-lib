@@ -1,5 +1,6 @@
 """ Init file for tgfp_lib module """
-from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
+# pylint: disable=unable-to-import
+from .tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
 
 __all__ = [
     'TGFP',
