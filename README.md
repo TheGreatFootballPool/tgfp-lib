@@ -8,4 +8,4 @@ To run tests:
    * `DOPPLER_ENV=1`
 
 ### To publish package
-* `doppler run -- poetry publish --build --username __token__ --password $PYPI_TOKEN`
+* choose 'POETRY PUBLISH' from the run configs in the PyCharm project
