@@ -8,6 +8,4 @@ To run tests:
    * `DOPPLER_ENV=1`
 
 ### To publish package
-* poetry build
-* pip install twine
-* twine upload file_name.whl --repository-url https://pip.server_name.com/
+* `doppler run -- poetry publish --build --username __token__ --password $PYPI_TOKEN`
