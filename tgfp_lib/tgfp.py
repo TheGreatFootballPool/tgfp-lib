@@ -277,6 +277,10 @@ class TGFP:
 
         return found_games
 
+    @staticmethod
+    def object_id_from_string(object_id_string: str) -> ObjectId:
+        return ObjectId(object_id_string)
+
 
 class TGFPTeam:
     # pylint: disable=too-many-instance-attributes
@@ -576,6 +580,7 @@ class TGFPGame:
 # pylint: disable=too-many-instance-attributes
 class TGFPPick:
     """ Class for the player's picks """
+
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
         self._id = None
@@ -666,11 +671,12 @@ class TGFPPick:
             self._id = result.upserted_id
         assert self._id is not None
 
-# pylint: disable=invalid-name
+    # pylint: disable=invalid-name
     @property
     def id(self):
         return self._id
-# pylint: enable=invalid-name
+
+    # pylint: enable=invalid-name
 
     def mongo_data(self):
         filtered_dict = {}
