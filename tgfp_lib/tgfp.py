@@ -475,6 +475,9 @@ class TGFPGame:
 
         return filtered_dict
 
+    def is_pregame(self):
+        return self.game_status == 'STATUS_SCHEDULED'
+
     def save(self):
         result = self._tgfp.mongodb.games.update_one(
             {
