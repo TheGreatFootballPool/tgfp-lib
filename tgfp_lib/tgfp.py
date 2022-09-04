@@ -464,6 +464,8 @@ class TGFPGame:
             self.week_no = data['week_no']
             self.season = data['season']
             self.tgfp_nfl_game_id = data['tgfp_nfl_game_id']
+            if 'extra_info' in data:
+                self.extra_info = data['extra_info']
 
     def mongo_data(self):
         filtered_dict = {}
