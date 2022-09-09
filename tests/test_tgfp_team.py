@@ -18,6 +18,8 @@ def tgfp_db(mocker):
 
 # pylint: disable=missing-function-docstring
 def test_team(tgfp_db):
+    team: TGFPTeam = tgfp_db.find_teams(team_id='s:20~l:28~t:2')[0]
+    assert team.long_name == 'Bills'
     teams = tgfp_db.teams()
     assert len(teams) == 32
     team_1: TGFPTeam

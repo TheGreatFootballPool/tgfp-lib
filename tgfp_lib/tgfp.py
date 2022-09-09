@@ -478,6 +478,9 @@ class TGFPGame:
     def is_pregame(self):
         return self.game_status == 'STATUS_SCHEDULED'
 
+    def is_final(self):
+        return self.game_status == 'STATUS_FINAL'
+
     def save(self):
         result = self._tgfp.mongodb.games.update_one(
             {
