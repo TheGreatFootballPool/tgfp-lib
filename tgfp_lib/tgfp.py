@@ -95,7 +95,7 @@ class TGFP:
         all_games_completed = True
         game: Optional[TGFPGame] = None
         for game in last_weeks_games:
-            if game.game_status != 'final':
+            if not game.is_final:
                 all_games_completed = False
                 break
         if game is None:
@@ -139,7 +139,7 @@ class TGFP:
         any_games_completed = False
         game: Optional[TGFPGame] = None
         for game in last_weeks_games:
-            if game.game_status == 'final':
+            if game.is_final:
                 any_games_completed = True
                 break
         if game is None:
@@ -242,8 +242,7 @@ class TGFP:
             week_no=None,
             season=None,
             home_team_id=None,
-            ordered_by=None,
-            game_status=None) -> List[TGFPGame]:
+            ordered_by=None) -> List[TGFPGame]:
         """ Find list of games """
         # pylint: disable=too-many-arguments
 
@@ -264,8 +263,6 @@ class TGFP:
             if search_season != game.season:
                 found = False
             if home_team_id and home_team_id != game.home_team_id:
-                found = False
-            if game_status and game_status != game.game_status:
                 found = False
             if found:
                 found_games.append(game)
@@ -475,9 +472,11 @@ class TGFPGame:
 
         return filtered_dict
 
+    @property
     def is_pregame(self):
         return self.game_status == 'STATUS_SCHEDULED'
 
+    @property
     def is_final(self):
         return self.game_status == 'STATUS_FINAL'
 
@@ -506,7 +505,7 @@ class TGFPGame:
     @property
     def winner_id_of_game(self):
         winner_id = None
-        if self.game_status == 'final':
+        if self.is_final:
             if self.home_team_score > self.road_team_score:
                 winner_id = self.home_team_id
             elif self.road_team_score > self.home_team_score:
@@ -527,7 +526,7 @@ class TGFPGame:
     @property
     def loser_id_of_game(self):
         loser_id = None
-        if self.game_status == 'final':
+        if self.is_final:
             if self.home_team_score > self.road_team_score:
                 loser_id = self.road_team_id
             elif self.road_team_score > self.home_team_score:
@@ -537,14 +536,14 @@ class TGFPGame:
 
     @property
     def winning_team(self):
-        if self.game_status == 'final' and self.winner_id_of_game:
+        if self.is_final and self.winner_id_of_game:
             return self._tgfp.find_teams(team_id=self.winner_id_of_game)[0]
 
         return None
 
     @property
     def losing_team(self):
-        if self.game_status == 'final' and self.loser_id_of_game:
+        if self.is_final and self.loser_id_of_game:
             return self._tgfp.find_teams(team_id=self.loser_id_of_game)[0]
 
         return None
@@ -552,7 +551,7 @@ class TGFPGame:
     @property
     def winning_team_score(self):
         winning_team_score = None
-        assert self.game_status == 'final'
+        assert self.is_final
         if self.home_team_score > self.road_team_score:
             winning_team_score = self.home_team_score
         elif self.road_team_score > self.home_team_score:
@@ -562,7 +561,7 @@ class TGFPGame:
 
     @property
     def losing_team_score(self):
-        assert self.game_status == 'final'
+        assert self.is_final
         losing_team_score = None
         if self.home_team_score > self.road_team_score:
             losing_team_score = self.road_team_score
@@ -636,7 +635,7 @@ class TGFPPick:
                     break
             if game is None:
                 raise GameNotFoundException
-            if game.game_status != "final":
+            if not game.is_final:
                 continue
             if game.road_team_score == game.home_team_score:
                 self.losses += 1

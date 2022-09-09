@@ -255,12 +255,3 @@ def test_find_games(tgfp_db):
     assert len(found_games) == 8
     found_games = tgfp_db.find_games(ordered_by='start_time')
     assert found_games[0].tgfp_nfl_game_id == 'nfl.g.20190905003'
-    found_games = tgfp_db.find_games(game_status='in progress')
-    assert len(found_games) == 0
-
-
-def test_find_games_2(tgfp_db_reg_season_b):
-    found_games = tgfp_db_reg_season_b.find_games(game_status='in progress')
-    assert len(found_games) == 1
-    assert found_games[0].game_status == 'in progress'
-    assert found_games[0].tgfp_nfl_game_id == 'nfl.g.20191229030'
