@@ -730,9 +730,8 @@ class TGFPClan:
             if '_id' in data:
                 self._id = data['_id']
             self.clan_name: str = data['clan_name']
-            self._members_data: List[dict] = data['members']
+            self.member_ids: List[dict] = data['member_ids']
             self.captain_id = data['captain_id']
-            self.captain_name = data['captain_name']
 
     # pylint: disable=invalid-name
     @property
@@ -748,7 +747,7 @@ class TGFPClan:
         return filtered_dict
 
     def save(self):
-        self._tgfp.mongodb.players.update_one(
+        self._tgfp.mongodb.clans.update_one(
             {
                 "_id": self._id
             },
@@ -760,7 +759,7 @@ class TGFPClan:
     def members(self) -> List[TGFPPlayer]:
         """ Return a list of players based on the member list """
         members: List[TGFPPlayer] = []
-        for member_data in self._members_data:
+        for member_data in self.member_ids:
             members.append(self._tgfp.find_players(player_id=member_data['member_id'])[0])
         return members
 
@@ -771,11 +770,13 @@ class TGFPClan:
         :return: returns a player if inserted, otherwise None
         """
         player: TGFPPlayer = self._tgfp.find_players(player_full_name=full_name)[0]
+        for member in self.members:
+            if player == member:
+                return None
         if player:
-            self._members_data.append(
+            self.member_ids.append(
                 {
-                    'member_id': player.id,
-                    'member_name': full_name
+                    'member_id': player.id
                 }
             )
             return player
