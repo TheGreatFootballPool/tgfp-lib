@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.10"
 pytz = "^2022.2.1"
 pymongo = "^4.2.0"
+beanie = "^1.11.9"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.15.0"

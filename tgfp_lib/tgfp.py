@@ -33,6 +33,7 @@ class TGFP:
         self._games = []
         self._picks = []
         self._players = []
+        self._clans = []
         self._home_page_text = ""
         self._current_season = 0
 
@@ -59,6 +60,12 @@ class TGFP:
             for team in self.mongodb.teams.find(batch_size=100000):
                 self._teams.append(TGFPTeam(tgfp=self, data=team))
         return self._teams
+
+    def clans(self) -> List[TGFPClan]:
+        if not self._clans:
+            for clan in self.mongodb.clans.find(batch_size=100000):
+                self._clans.append(TGFPClan(tgfp=self, data=clan))
+        return self._clans
 
     def picks(self) -> List[TGFPPick]:
         """
@@ -164,6 +171,7 @@ class TGFP:
             player_email=None,
             discord_id=None,
             player_active=None,
+            player_full_name=None,
             ordered_by=None,
             reverse_order=False) -> List[TGFPPlayer]:
         # pylint: disable=too-many-arguments
@@ -189,6 +197,8 @@ class TGFP:
                 found = False
             if discord_id is not None and discord_id != player.discord_id:
                 found = False
+            if player_full_name is not None and player_full_name != player.full_name():
+                found = False
             if found:
                 found_players.append(player)
         if ordered_by == "total_points":
@@ -210,6 +220,24 @@ class TGFP:
                 found_teams.append(team)
 
         return found_teams
+
+    def find_clan(self, clan_id=None, clan_name=None, clan_captain=None) -> Optional[TGFPClan]:
+        """ find a list of TGFPTeams given input filter team_id and or tgfp_nfl_team_id """
+        found_clan: Optional[TGFPClan] = None
+        clan: TGFPClan
+        for clan in self.clans():
+            found = True
+            if clan_id and clan_id != clan.id:
+                found = False
+            if clan_name and clan_name != clan.clan_name:
+                found = False
+            if clan_captain and clan_captain != clan.captain_name:
+                found = False
+            if found:
+                found_clan = clan
+                break
+
+        return found_clan
 
     def find_picks(self, pick_id=None, week_no=None, season=None, player_id=None) -> List[TGFPPick]:
         """ Find a list of TGFPPicks """
@@ -692,3 +720,63 @@ class TGFPPick:
                 filtered_dict.update({key: value})
 
         return filtered_dict
+
+
+class TGFPClan:
+    """ Class for the 'clans' of the great football pool """
+    def __init__(self, tgfp, data=None):
+        self._tgfp: TGFP = tgfp
+        if data:
+            if '_id' in data:
+                self._id = data['_id']
+            self.clan_name: str = data['clan_name']
+            self._members_data: List[dict] = data['members']
+            self.captain_id = data['captain_id']
+            self.captain_name = data['captain_name']
+
+    # pylint: disable=invalid-name
+    @property
+    def id(self):
+        return self._id
+
+    def mongo_data(self):
+        filtered_dict = {}
+        for key, value in self.__dict__.items():
+            if not key.startswith('_'):
+                filtered_dict.update({key: value})
+
+        return filtered_dict
+
+    def save(self):
+        self._tgfp.mongodb.players.update_one(
+            {
+                "_id": self._id
+            },
+            {"$set": self.mongo_data()},
+            upsert=True
+        )
+
+    @property
+    def members(self) -> List[TGFPPlayer]:
+        """ Return a list of players based on the member list """
+        members: List[TGFPPlayer] = []
+        for member_data in self._members_data:
+            members.append(self._tgfp.find_players(player_id=member_data['member_id'])[0])
+        return members
+
+    def add_member(self, full_name) -> Optional[TGFPPlayer]:
+        """
+        Adds a member to this clan (self)
+        :param full_name:
+        :return: returns a player if inserted, otherwise None
+        """
+        player: TGFPPlayer = self._tgfp.find_players(player_full_name=full_name)[0]
+        if player:
+            self._members_data.append(
+                {
+                    'member_id': player.id,
+                    'member_name': full_name
+                }
+            )
+            return player
+        return None
