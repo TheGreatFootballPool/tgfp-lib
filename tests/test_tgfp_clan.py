@@ -24,6 +24,13 @@ def test_add_member():
     johns_clan.delete_all_members()
 
 
+def test_find_clan_by_discord_id():
+    """ Test searching by discord ID"""
+    tgfp = TGFP()
+    johns_clan: TGFPClan = tgfp.find_clan(discord_role_id = 1016665854538154076)
+    assert johns_clan.clan_name == "Team John"
+
+
 def test_delete_member():
     """ Test the 'delete all members' functionality """
     tgfp = TGFP()

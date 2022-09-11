@@ -221,7 +221,10 @@ class TGFP:
 
         return found_teams
 
-    def find_clan(self, clan_id=None, clan_name=None, clan_captain=None) -> Optional[TGFPClan]:
+    def find_clan(self,
+                  clan_id=None,
+                  clan_name=None,
+                  discord_role_id=None) -> Optional[TGFPClan]:
         """ find a list of TGFPTeams given input filter team_id and or tgfp_nfl_team_id """
         found_clan: Optional[TGFPClan] = None
         clan: TGFPClan
@@ -231,7 +234,7 @@ class TGFP:
                 found = False
             if clan_name and clan_name != clan.clan_name:
                 found = False
-            if clan_captain and clan_captain != clan.captain_name:
+            if discord_role_id and discord_role_id != clan.discord_role_id:
                 found = False
             if found:
                 found_clan = clan
@@ -732,6 +735,7 @@ class TGFPClan:
             self.clan_name: str = data['clan_name']
             self.member_ids: List[dict] = data['member_ids']
             self.captain_id = data['captain_id']
+            self.discord_role_id: int = data['discord_role_id']
 
     # pylint: disable=invalid-name
     @property
