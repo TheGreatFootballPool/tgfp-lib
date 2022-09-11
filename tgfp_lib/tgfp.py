@@ -784,5 +784,6 @@ class TGFPClan:
         return None
 
     def delete_all_members(self):
+        """ Deletes all members of the clan """
         self.member_ids = []
         self.save()
