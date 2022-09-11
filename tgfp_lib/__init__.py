@@ -1,11 +1,11 @@
 """ Init file for tgfp_lib module """
-# pylint: disable=unable-to-import
-from .tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
+from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer, TGFPClan
 
 __all__ = [
     'TGFP',
     'TGFPTeam',
     'TGFPPick',
     'TGFPPlayer',
-    'TGFPGame'
+    'TGFPGame',
+    'TGFPClan'
 ]
