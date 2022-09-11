@@ -13,11 +13,25 @@ def test_clan():
 def test_add_member():
     """ Test adding a clan to the DB """
     tgfp = TGFP()
-    dons_clan: TGFPClan = tgfp.find_clan(clan_name="Team Don")
-    assert dons_clan
-    assert isinstance(dons_clan, TGFPClan)
-    player: TGFPPlayer = dons_clan.add_member("Will Kahl")
-    assert player.first_name == "Will"
-    dons_clan.save()
-    player_2: TGFPPlayer = dons_clan.add_member("Will Kahl")
+    johns_clan: TGFPClan = tgfp.find_clan(clan_name="Team John")
+    johns_clan.delete_all_members()
+    assert johns_clan
+    assert isinstance(johns_clan, TGFPClan)
+    player: TGFPPlayer = johns_clan.add_member(752964049959911514)
+    assert player.first_name == "Teresa"
+    player_2: TGFPPlayer = johns_clan.add_member(752964049959911514)
     assert player_2 is None
+    johns_clan.delete_all_members()
+
+
+def test_delete_member():
+    """ Test the 'delete all members' functionality """
+    tgfp = TGFP()
+    johns_clan: TGFPClan = tgfp.find_clan(clan_name="Team John")
+    player: TGFPPlayer = johns_clan.add_member(752964049959911514)
+    assert player.first_name == "Teresa"
+    player_2: TGFPPlayer = johns_clan.add_member(752964049959911514)
+    assert len(johns_clan.members) > 0
+    assert player_2 is None
+    johns_clan.delete_all_members()
+    assert len(johns_clan.members) == 0

@@ -763,13 +763,13 @@ class TGFPClan:
             members.append(self._tgfp.find_players(player_id=member_data['member_id'])[0])
         return members
 
-    def add_member(self, full_name) -> Optional[TGFPPlayer]:
+    def add_member(self, discord_id: int) -> Optional[TGFPPlayer]:
         """
         Adds a member to this clan (self)
-        :param full_name:
+        :param discord_id:
         :return: returns a player if inserted, otherwise None
         """
-        player: TGFPPlayer = self._tgfp.find_players(player_full_name=full_name)[0]
+        player: TGFPPlayer = self._tgfp.find_players(discord_id=discord_id)[0]
         for member in self.members:
             if player == member:
                 return None
@@ -779,5 +779,10 @@ class TGFPClan:
                     'member_id': player.id
                 }
             )
+            self.save()
             return player
         return None
+
+    def delete_all_members(self):
+        self.member_ids = []
+        self.save()
