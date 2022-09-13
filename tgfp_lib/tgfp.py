@@ -820,7 +820,7 @@ class TGFPClan:
         """ Adds up player bonus and returns the result """
         bonus: int = 0
         for member in self.members:
-            bonus += member.losses()
+            bonus += member.bonus()
 
         return bonus
 
@@ -847,7 +847,7 @@ class TGFPClan:
         """ Adds up player last_bonus and returns the result """
         last_bonus: int = 0
         for member in self.members:
-            last_bonus += member.last_losses()
+            last_bonus += member.last_bonus()
 
         return last_bonus
 
