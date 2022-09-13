@@ -61,10 +61,15 @@ class TGFP:
                 self._teams.append(TGFPTeam(tgfp=self, data=team))
         return self._teams
 
-    def clans(self) -> List[TGFPClan]:
+    def clans(self, ordered_by=None, reverse_order=False) -> List[TGFPClan]:
         if not self._clans:
             for clan in self.mongodb.clans.find(batch_size=100000):
                 self._clans.append(TGFPClan(tgfp=self, data=clan))
+
+        all_clans = self._clans
+        if ordered_by == "total_points":
+            all_clans.sort(key=lambda x: x.total_points, reverse=reverse_order)
+
         return self._clans
 
     def picks(self) -> List[TGFPPick]:
