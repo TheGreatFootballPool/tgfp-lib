@@ -791,3 +791,57 @@ class TGFPClan:
         """ Deletes all members of the clan """
         self.member_ids = []
         self.save()
+
+    @property
+    def wins(self):
+        """ Adds up player wins and returns the result """
+        wins: int = 0
+        for member in self.members:
+            wins += member.wins()
+
+        return wins
+
+    @property
+    def losses(self):
+        """ Adds up player losses and returns the result """
+        losses: int = 0
+        for member in self.members:
+            losses += member.losses()
+
+        return losses
+
+    @property
+    def bonus(self):
+        """ Adds up player bonus and returns the result """
+        bonus: int = 0
+        for member in self.members:
+            bonus += member.losses()
+
+        return bonus
+
+    @property
+    def last_wins(self):
+        """ Adds up player last_wins and returns the result """
+        last_wins: int = 0
+        for member in self.members:
+            last_wins += member.last_wins()
+
+        return last_wins
+
+    @property
+    def last_losses(self):
+        """ Adds up player last_losses and returns the result """
+        last_losses: int = 0
+        for member in self.members:
+            last_losses += member.last_losses()
+
+        return last_losses
+
+    @property
+    def last_bonus(self):
+        """ Adds up player last_bonus and returns the result """
+        last_bonus: int = 0
+        for member in self.members:
+            last_bonus += member.last_losses()
+
+        return last_bonus
