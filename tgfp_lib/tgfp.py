@@ -845,3 +845,16 @@ class TGFPClan:
             last_bonus += member.last_losses()
 
         return last_bonus
+
+    @property
+    def winning_pct(self):
+        """ Returns the winning percentage"""
+        wins_and_losses = float(self.wins + self.losses)
+        if wins_and_losses:
+            return self.wins / wins_and_losses
+
+        return 0
+
+    @property
+    def total_points(self):
+        return self.wins + self.bonus
