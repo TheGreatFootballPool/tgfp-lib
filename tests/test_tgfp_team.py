@@ -1,4 +1,6 @@
 """Unit Test TGFP Team """
+from typing import List
+
 import pytest
 from tgfp import TGFP, TGFPTeam
 
@@ -18,8 +20,10 @@ def tgfp_db(mocker):
 
 # pylint: disable=missing-function-docstring
 def test_team(tgfp_db):
-    team: TGFPTeam = tgfp_db.find_teams(team_id='s:20~l:28~t:2')[0]
+    teams: List[TGFPTeam] = tgfp_db.find_teams(tgfp_nfl_team_id='s:20~l:28~t:2')
+    team: TGFPTeam = teams[0]
     assert team.long_name == 'Bills'
+    assert team.discord_emoji == ":bills:"
     teams = tgfp_db.teams()
     assert len(teams) == 32
     team_1: TGFPTeam
@@ -27,11 +31,4 @@ def test_team(tgfp_db):
     team_data = team_1.mongo_data()
     assert '_id' not in team_data
     assert 'short_name' in team_data
-    assert team_1.wins == 10
-    team_1.wins = 5
-    team_1.save()
-    new_data = TGFP()
-    team_1_new = new_data.teams()[0]
-    assert team_1_new.wins == 5
-    team_1_new.wins = 10
-    team_1_new.save()
+    assert 'discord_emoji' in team_data

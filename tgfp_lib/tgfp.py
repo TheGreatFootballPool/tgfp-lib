@@ -333,6 +333,7 @@ class TGFPTeam:
         self.tgfp_nfl_team_id = data['tgfp_nfl_team_id']
         self.logo_url = data['logo_url']
         self.full_name = self.city + ' ' + self.long_name
+        self.discord_emoji = data['discord_emoji']
 
     def mongo_data(self):
         filtered_dict = {}
