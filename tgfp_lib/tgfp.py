@@ -26,8 +26,6 @@ class TGFP:
     Main class for the great football pool
     """
 
-    PRO_BOWL_WEEK = 21
-
     def __init__(self):
         self._teams = []
         self._games = []
@@ -116,9 +114,6 @@ class TGFP:
             current_week = game.week_no + 1
         else:
             current_week = game.week_no
-
-        if current_week == self.PRO_BOWL_WEEK:
-            current_week += 1
 
         return current_week
 

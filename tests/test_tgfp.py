@@ -110,7 +110,17 @@ def tgfp_db_reg_season_d(tgfp_db_reg_season):
     return tgfp_db_reg_season
 
 
+@pytest.fixture
+def tgfp_db_live():
+    """ Return the live TGFP db object"""
+    return TGFP()
+
+
 # pylint: disable=missing-function-docstring
+def test_live_week_no(tgfp_db_live):
+    assert tgfp_db_live.current_week() == 21
+
+
 def test_games(tgfp_db):
     games = tgfp_db.find_games(season=2019)
     assert len(games) == 267
