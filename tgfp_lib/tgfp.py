@@ -17,6 +17,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class GameNotFoundException(Exception):
     """ Exception for not finding a game """
+PRO_BOWL_WEEK = 22
 
 
 # pylint: disable=missing-function-docstring
@@ -115,6 +116,8 @@ class TGFP:
         else:
             current_week = game.week_no
 
+        if current_week >= PRO_BOWL_WEEK:
+            current_week += 1
         return current_week
 
     def current_season(self) -> int:
