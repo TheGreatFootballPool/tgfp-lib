@@ -27,7 +27,7 @@ class TGFP:
     Main class for the great football pool
     """
 
-    def __init__(self):
+    def __init__(self, mongo_uri):
         self._teams = []
         self._games = []
         self._picks = []
@@ -36,7 +36,7 @@ class TGFP:
         self._home_page_text = ""
         self._current_season = 0
 
-        self.mongoclient: MongoClient = MongoClient(os.getenv('MONGO_URI'))
+        self.mongoclient: MongoClient = MongoClient(mongo_uri)
 
         self.mongodb = self.mongoclient['tgfp']
         self._home_page_text = None

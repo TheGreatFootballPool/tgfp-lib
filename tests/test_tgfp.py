@@ -1,4 +1,6 @@
 """Unit Test For TGFP """
+import os
+
 import pytest
 from bson import ObjectId
 
@@ -14,8 +16,9 @@ def tgfp_db(mocker):
     :return: tgfp database object
     :rtype: TGFP
     """
+    mongo_uri = os.getenv('MONGO_URI_TST')
     mocker.patch("tgfp.TGFP.current_season", return_value=2019)
-    return TGFP()
+    return TGFP(mongo_uri)
 
 
 @pytest.fixture
@@ -113,7 +116,8 @@ def tgfp_db_reg_season_d(tgfp_db_reg_season):
 @pytest.fixture
 def tgfp_db_live():
     """ Return the live TGFP db object"""
-    return TGFP()
+    mongo_uri = os.getenv('MONGO_URI_PRD')
+    return TGFP(mongo_uri)
 
 
 # pylint: disable=missing-function-docstring
