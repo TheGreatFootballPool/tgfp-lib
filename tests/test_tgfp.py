@@ -6,6 +6,10 @@ from bson import ObjectId
 
 from tgfp import TGFP, TGFPGame, TGFPTeam, TGFPPick, TGFPPlayer
 
+from config import get_config, Config
+
+config: Config = get_config()
+
 
 # pylint: disable=redefined-outer-name
 @pytest.fixture
@@ -16,7 +20,7 @@ def tgfp_db(mocker):
     :return: tgfp database object
     :rtype: TGFP
     """
-    mongo_uri = os.getenv('MONGO_URI_TST')
+    mongo_uri = config.MONGO_URI
     mocker.patch("tgfp.TGFP.current_season", return_value=2019)
     return TGFP(mongo_uri)
 
@@ -116,13 +120,13 @@ def tgfp_db_reg_season_d(tgfp_db_reg_season):
 @pytest.fixture
 def tgfp_db_live():
     """ Return the live TGFP db object"""
-    mongo_uri = os.getenv('MONGO_URI_PRD')
+    mongo_uri = config.MONGO_URI
     return TGFP(mongo_uri)
 
 
 # pylint: disable=missing-function-docstring
 def test_live_week_no(tgfp_db_live):
-    assert tgfp_db_live.current_week() == 21
+    assert tgfp_db_live.current_week() == 12
 
 
 def test_games(tgfp_db):

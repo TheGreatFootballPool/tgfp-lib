@@ -1,0 +1,19 @@
+services:
+  tgfp-mongodb:
+    image: mongo:6
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=tgfp
+      - MONGO_INITDB_ROOT_PASSWORD=development
+    restart: unless-stopped
+    container_name: tgfp-mongodb
+    hostname: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/ --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s

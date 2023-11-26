@@ -486,6 +486,7 @@ class TGFPGame:
                 self._id = data['_id']
             # below are mandatory fields in the DB
             self.favorite_team_id = data['favorite_team_id']
+            # Status: STATUS_IN_PROGRESS, STATUS_FINAL, STATUS_SCHEDULED
             self.game_status = data['game_status']
             self.home_team_id = data['home_team_id']
             self.home_team_score = data['home_team_score']

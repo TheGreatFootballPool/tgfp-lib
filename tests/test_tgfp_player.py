@@ -2,6 +2,10 @@
 import math
 import pytest
 from tgfp import TGFP, TGFPPick, TGFPPlayer
+from config import get_config, Config
+from unittest.mock import MagicMock
+
+config: Config = get_config()
 
 
 # pylint: disable=redefined-outer-name
@@ -14,7 +18,8 @@ def tgfp_db(mocker):
     :rtype: TGFP
     """
     mocker.patch("tgfp.TGFP.current_season", return_value=2019)
-    return TGFP()
+    mocker.patch("tgfp.TGFP.current_week", return_value=22)
+    return TGFP(config.MONGO_URI)
 
 
 @pytest.fixture
@@ -29,7 +34,7 @@ def tgfp_db_reg_season_in_pregame(tgfp_db):
     :rtype: TGFP
     """
     last_game = tgfp_db.find_games(ordered_by='week_no')[-1]
-    last_game.game_status = 'pregame'
+    last_game.game_status = 'STATUS_SCHEDULED'
     return tgfp_db
 
 
@@ -47,7 +52,7 @@ def player_inactive(tgfp_db: TGFP):
 
 def test_player(tgfp_db):
     players = tgfp_db.players()
-    assert len(players) == 28
+    assert len(players) == 30
     assert isinstance(players[0], TGFPPlayer)
 
 
@@ -58,6 +63,7 @@ def test_player_wins(player):
 
 
 def test_player_win_csv(player: TGFPPlayer):
+    player._tgfp.current_week = MagicMock(return_value=23)
     csv = player.win_csv()
     assert ',' in csv
     split_csv = csv.split(',')
@@ -86,9 +92,9 @@ def test_player_bonus(player):
 
 
 def test_player_last_things(player: TGFPPlayer):
-    assert player.last_bonus() == -1
+    assert player.last_bonus() == 0
     assert player.last_wins() == 0
-    assert player.last_losses() == 1
+    assert player.last_losses() == 0
 
 
 def test_player_total_points(player: TGFPPlayer):
@@ -129,7 +135,7 @@ def test_player_save(player: TGFPPlayer):
     assert player.first_name == "John"
     player.first_name = "Juan"
     player.save()
-    new_data = TGFP()
+    new_data = TGFP(config.MONGO_URI)
     new_player = new_data.players()[0]
     assert new_player.first_name == "Juan"
     new_player.first_name = "John"

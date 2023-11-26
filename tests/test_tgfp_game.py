@@ -1,10 +1,12 @@
 """Unit Test wrapper for discord_bot_tester.py"""
 from datetime import datetime
 import pytest
-from bson import ObjectId
 
 # pylint: disable=redefined-outer-name
 from tgfp import TGFP, TGFPGame, TGFPTeam
+from config import get_config, Config
+
+config: Config = get_config()
 
 
 @pytest.fixture
@@ -15,19 +17,19 @@ def tgfp_db(mocker):
     :return: tgfp database object
     :rtype: TGFP
     """
-    mocker.patch("tgfp.TGFP.current_season", return_value=2019)
-    return TGFP()
+    mocker.patch("tgfp.TGFP.current_season", return_value=2022)
+    return TGFP(config.MONGO_URI)
 
 
 # pylint: disable=missing-function-docstring
 @pytest.fixture
 def game(tgfp_db: TGFP) -> TGFPGame:
-    return tgfp_db.find_games(season=2019)[0]
+    return tgfp_db.find_games(season=2022)[0]
 
 
 @pytest.fixture
 def west_coast_game(tgfp_db: TGFP) -> TGFPGame:
-    return tgfp_db.find_games(tgfp_nfl_game_id='nfl.g.20190922025')[0]
+    return tgfp_db.find_games(tgfp_nfl_game_id='s:20~l:28~e:401437653')[0]
 
 
 def test_tgfpgame(game: TGFPGame):
@@ -41,23 +43,23 @@ def test_game_mongo_data(game):
 
 
 def test_game_save(game: TGFPGame):
-    assert game.game_status == 'final'
-    game.game_status = 'in progress'
-    new_tgfp = TGFP()
-    new_game = new_tgfp.find_games(season=2019)[0]
-    assert new_game.game_status == 'final'
+    assert game.game_status == 'STATUS_FINAL'
+    game.game_status = 'STATUS_IN_PROGRESS'
+    new_tgfp = TGFP(config.MONGO_URI)
+    new_game = new_tgfp.find_games(season=2022)[0]
+    assert new_game.game_status == 'STATUS_FINAL'
     game.save()
-    newer_tgfp = TGFP()
-    newer_game = newer_tgfp.find_games(season=2019)[0]
-    assert newer_game.game_status == 'in progress'
-    newer_game.game_status = 'final'
+    newer_tgfp = TGFP(config.MONGO_URI)
+    newer_game = newer_tgfp.find_games(season=2022)[0]
+    assert newer_game.game_status == 'STATUS_IN_PROGRESS'
+    newer_game.game_status = 'STATUS_FINAL'
     newer_game.save()
 
 
 # noinspection DuplicatedCode
 def test_winner_id_of_game(game: TGFPGame):
-    home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
-    road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')
+    home_team_id = game.home_team_id
+    road_team_id = game.road_team_id
     assert game.winner_id_of_game == road_team_id
     game.home_team_score = 100
     assert game.winner_id_of_game == home_team_id
@@ -65,14 +67,14 @@ def test_winner_id_of_game(game: TGFPGame):
     assert game.winner_id_of_game is None
     game.road_team_score = 4
     assert game.winner_id_of_game == home_team_id
-    game.game_status = 'in progress'
+    game.game_status = 'STATUS_IN_PROGRESS'
     assert game.winner_id_of_game is None
 
 
 # noinspection DuplicatedCode
 def test_leader_id_of_game(game: TGFPGame):
-    home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
-    road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')
+    home_team_id = game.home_team_id
+    road_team_id = game.road_team_id
     assert game.leader_id_of_game == road_team_id
     game.home_team_score = 100
     assert game.leader_id_of_game == home_team_id
@@ -80,14 +82,14 @@ def test_leader_id_of_game(game: TGFPGame):
     assert game.leader_id_of_game is None
     game.road_team_score = 4
     assert game.leader_id_of_game == home_team_id
-    game.game_status = 'in progress'
+    game.game_status = 'STATUS_IN_PROGRESS'
     assert game.leader_id_of_game == home_team_id
 
 
 # noinspection DuplicatedCode
 def test_loser_id_of_game(game: TGFPGame):
-    home_team_id = ObjectId('59ac8f79ee45e20848e11a88')
-    road_team_id = ObjectId('59ac8d8aee45e20848e11a7c')
+    home_team_id = game.home_team_id
+    road_team_id = game.road_team_id
     assert game.loser_id_of_game == home_team_id
     game.home_team_score = 100
     assert game.loser_id_of_game == road_team_id
@@ -95,13 +97,13 @@ def test_loser_id_of_game(game: TGFPGame):
     assert game.loser_id_of_game is None
     game.road_team_score = 4
     assert game.loser_id_of_game == road_team_id
-    game.game_status = 'in progress'
+    game.game_status = 'STATUS_IN_PROGRESS'
     assert game.loser_id_of_game is None
 
 
 def test_winning_team(game: TGFPGame):
     winning_team: TGFPTeam = game.winning_team
-    assert winning_team.full_name == "Kansas City Chiefs"
+    assert winning_team.full_name == "Buffalo Bills"
     game.road_team_score = 10
     game.home_team_score = 10
     assert game.winning_team is None
@@ -109,26 +111,26 @@ def test_winning_team(game: TGFPGame):
 
 def test_losing_team(game: TGFPGame):
     losing_team: TGFPTeam = game.losing_team
-    assert losing_team.full_name == "Jacksonville Jaguars"
+    assert losing_team.full_name == "Los Angeles Rams"
     game.road_team_score = 10
     game.home_team_score = 10
     assert game.losing_team is None
 
 
 def test_winning_team_score(game: TGFPGame):
-    assert game.winning_team_score == 40
-    game.road_team_score = 20
-    assert game.winning_team_score == 26
+    assert game.winning_team_score == 31
+    game.road_team_score = 5
+    assert game.winning_team_score == 10
 
 
 def test_losing_team_score(game: TGFPGame):
-    assert game.losing_team_score == 26
-    game.road_team_score = 20
-    assert game.losing_team_score == 20
+    assert game.losing_team_score == 10
+    game.road_team_score = 5
+    assert game.losing_team_score == 5
 
 
 def test_underdog_team_id(game: TGFPGame):
-    assert game.underdog_team_id == ObjectId('59ac8f79ee45e20848e11a88')
+    assert game.underdog_team_id == game.home_team_id
 
 
 def test_pacific_start_time(west_coast_game: TGFPGame):
