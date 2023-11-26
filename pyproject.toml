@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tgfp-lib"
-version = "2.2.0"
+version = "2.2.1"
 description = "The Great Football Pool Project"
 authors = ["John Sturgeon <john.sturgeon@me.com>"]
 license = "MIT"
@@ -10,7 +10,6 @@ python = "^3.11"
 pytz = "^2023.3.post1"
 pymongo = "^4.6.0"
 beanie = "^1.23.6"
-poetryup = "^0.12.7"
 pylint = "^3.0.2"
 prefect = "^2.14.6"
 
