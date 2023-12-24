@@ -4,7 +4,6 @@
 """
 from __future__ import annotations
 
-import os
 import pprint
 from typing import List, Optional
 
@@ -17,6 +16,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class GameNotFoundException(Exception):
     """ Exception for not finding a game """
+
+
 PRO_BOWL_WEEK = 22
 
 
@@ -128,6 +129,12 @@ class TGFP:
             current_season = self.mongodb.tgfp_info.find_one(batch_size=100000)
             self._current_season = current_season['current_season']
         return self._current_season
+
+    def seasons(self) -> List[int]:
+        seasons: List[int] = []
+        for season in self.mongodb.games.distinct("season"):
+            seasons.append(int(season))
+        return seasons
 
     def current_active_week(self) -> int:
         """
@@ -245,7 +252,14 @@ class TGFP:
 
         return found_clan
 
-    def find_picks(self, pick_id=None, week_no=None, season=None, player_id=None) -> List[TGFPPick]:
+    def find_picks(
+            self,
+            pick_id=None,
+            week_no=None,
+            season=None,
+            player_id=None,
+            team_id=None
+    ) -> List[TGFPPick]:
         """ Find a list of TGFPPicks """
         found_picks = []
         if season:
@@ -264,6 +278,7 @@ class TGFP:
                 found = False
             if player_id and player_id != pick.player_id:
                 found = False
+            if team_id and (team_id != pick.pick_detail.
             if found:
                 found_picks.append(pick)
 

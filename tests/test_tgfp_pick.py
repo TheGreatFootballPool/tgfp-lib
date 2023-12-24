@@ -11,6 +11,7 @@ from config import get_config, Config
 
 config: Config = get_config()
 
+
 @pytest.fixture
 def tgfp_db(mocker) -> TGFP:
     """

@@ -5,7 +5,7 @@ Instructions for testing / using tgfp lib
 To run tests:
 * Run the 'run' configuration for 'Run Tests'
 
-Instructions below are for setting up the test DB
+## Instructions below are for setting up the test DB
 
 1. [DB] Create the dev `stack.env` file
    - `create_dev_env.sh`
@@ -25,7 +25,7 @@ Instructions below are for setting up the test DB
    3. `mongorestore --username tgfp --password development dump/ --authenticationDatabase=admin --drop`
 5. [DB] Confirm the DB looks good by checking with mongo compass gui
 
-* Run the tests
+## Run the tests
 
 ### To publish package and update the production instance
 * Run the shell script `bump_version_and_publish.sh`

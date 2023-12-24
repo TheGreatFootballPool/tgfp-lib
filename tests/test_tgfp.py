@@ -1,5 +1,6 @@
 """Unit Test For TGFP """
 import os
+from typing import List
 
 import pytest
 from bson import ObjectId
@@ -273,3 +274,9 @@ def test_find_games(tgfp_db):
     assert len(found_games) == 8
     found_games = tgfp_db.find_games(ordered_by='start_time')
     assert found_games[0].tgfp_nfl_game_id == 'nfl.g.20190905003'
+
+
+def test_seasons(tgfp_db):
+    seasons: List[int] = tgfp_db.seasons()
+    assert seasons[0] == 2018
+    assert tgfp_db.current_season() == seasons[1]
