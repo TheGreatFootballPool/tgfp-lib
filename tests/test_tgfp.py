@@ -127,7 +127,7 @@ def tgfp_db_live():
 
 # pylint: disable=missing-function-docstring
 def test_live_week_no(tgfp_db_live):
-    assert tgfp_db_live.current_week() == 12
+    assert tgfp_db_live.current_week() == 16
 
 
 def test_games(tgfp_db):
@@ -277,6 +277,6 @@ def test_find_games(tgfp_db):
 
 
 def test_seasons(tgfp_db):
-    seasons: List[int] = tgfp_db.seasons()
+    seasons: List[int] = tgfp_db.seasons
     assert seasons[0] == 2018
     assert tgfp_db.current_season() == seasons[1]

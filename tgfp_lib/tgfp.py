@@ -130,6 +130,7 @@ class TGFP:
             self._current_season = current_season['current_season']
         return self._current_season
 
+    @property
     def seasons(self) -> List[int]:
         seasons: List[int] = []
         for season in self.mongodb.games.distinct("season"):
@@ -216,7 +217,12 @@ class TGFP:
 
         return found_players
 
-    def find_teams(self, team_id=None, tgfp_nfl_team_id=None) -> List[TGFPTeam]:
+    def find_teams(
+            self,
+            team_id=None,
+            tgfp_nfl_team_id=None,
+            long_name: Optional[str]=None
+    ) -> List[TGFPTeam]:
         """ find a list of TGFPTeams given input filter team_id and or tgfp_nfl_team_id """
         found_teams = []
         team: TGFPTeam
@@ -225,6 +231,8 @@ class TGFP:
             if team_id and team_id != team.id:
                 found = False
             if tgfp_nfl_team_id and tgfp_nfl_team_id != team.tgfp_nfl_team_id:
+                found = False
+            if long_name and long_name != team.long_name:
                 found = False
             if found:
                 found_teams.append(team)
@@ -257,8 +265,7 @@ class TGFP:
             pick_id=None,
             week_no=None,
             season=None,
-            player_id=None,
-            team_id=None
+            player_id=None
     ) -> List[TGFPPick]:
         """ Find a list of TGFPPicks """
         found_picks = []
@@ -278,7 +285,6 @@ class TGFP:
                 found = False
             if player_id and player_id != pick.player_id:
                 found = False
-            if team_id and (team_id != pick.pick_detail.
             if found:
                 found_picks.append(pick)
 
@@ -376,7 +382,8 @@ class TGFPPlayer:
 
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
-        self._picks = None
+        self._picks: Optional[List[TGFPPick]] = None
+        self._pick_history: Optional[List[TGFPPick]] = None
         self._id = data['_id']
         self.last_name = data['last_name']
         self.first_name = data['first_name']
@@ -405,6 +412,7 @@ class TGFPPlayer:
             elif week_no and pick.week_no == week_no:
                 local_wins += pick.wins
         return local_wins
+
 
     def win_csv(self):
         week_range = range(1, self._tgfp.current_week())
@@ -452,6 +460,19 @@ class TGFPPlayer:
 
     def load_picks(self):
         self._picks = self._tgfp.find_picks(player_id=self._id)
+
+    def pick_history(self) -> List[TGFPPick]:
+        if not self._pick_history:
+            self._pick_history = []
+            for season in self._tgfp.seasons:
+                self._pick_history.extend(
+                    self._tgfp.find_picks(
+                        season=season,
+                        player_id=self._id
+                    )
+                )
+        return self._pick_history
+
 
     def full_name(self):
         return self.first_name + ' ' + self.last_name
@@ -600,6 +621,14 @@ class TGFPGame:
         return None
 
     @property
+    def home_team(self):
+        return self._tgfp.find_teams(team_id=self.home_team_id)[0]
+
+    @property
+    def road_team(self):
+        return self._tgfp.find_teams(team_id=self.road_team_id)[0]
+
+    @property
     def winning_team_score(self):
         winning_team_score = None
         assert self.is_final
@@ -638,6 +667,12 @@ class TGFPGame:
 # pylint: disable=too-many-instance-attributes
 class TGFPPick:
     """ Class for the player's picks """
+    class PickDetail:
+        """ Detailed pick information"""
+        def __init__(self, tgfp, data):
+            self._tgfp = tgfp
+            self.game_id = data['game_id']
+            self.winner_id = data['winner_id']
 
     def __init__(self, tgfp, data):
         self._tgfp = tgfp
@@ -661,13 +696,29 @@ class TGFPPick:
             self.upset_team_id = None
             self.season = tgfp.current_season()
 
-    def winner_for_game_id(self, game_id):
+    def winner_for_game_id(self, game_id) -> Optional[ObjectId]:
         winner_id = None
         for pick in self.pick_detail:
             if pick['game_id'] == game_id:
                 winner_id = pick['winner_id']
                 break
         return winner_id
+
+    @property
+    def games(self) -> List[TGFPGame]:
+        return_games: List[TGFPGame] = []
+        for game in self.pick_detail:
+            return_games.append(
+                self._tgfp.find_games(game_id=game['game_id'])[0]
+            )
+        return return_games
+
+    def games_by_team(self, team: TGFPTeam) -> List[TGFPGame]:
+        return_games: List[TGFPGame] = []
+        for game in self.games:
+            if team.id == game.home_team_id or team.id == game.road_team_id:
+                return_games.append(game)
+        return return_games
 
     def load_record(self, games=None):
         # go through each game in pick_detail
@@ -701,13 +752,13 @@ class TGFPPick:
                 self.update_wins(pick, winning_team_id)
                 self.update_bonus(winning_team_id, losing_team_id)
 
-    def update_wins(self, pick, winning_team_id):
+    def update_wins(self, pick: TGFPPick.PickDetail, winning_team_id: ObjectId):
         if winning_team_id == pick['winner_id']:
             self.wins += 1
         else:
             self.losses += 1
 
-    def update_bonus(self, winning_team_id, losing_team_id):
+    def update_bonus(self, winning_team_id: ObjectId, losing_team_id: ObjectId):
         if winning_team_id == self.lock_team_id:
             self.bonus += 1
         if losing_team_id == self.lock_team_id:

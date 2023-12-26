@@ -137,3 +137,10 @@ def test_pacific_start_time(west_coast_game: TGFPGame):
     pacific_start_time: datetime = west_coast_game.pacific_start_time
     assert pacific_start_time.hour == 13
     assert pacific_start_time.minute == 25
+
+
+def test_home_road_teams(game: TGFPGame):
+    assert game.home_team
+    assert game.road_team
+    assert isinstance(game.home_team, TGFPTeam)
+    assert isinstance(game.road_team, TGFPTeam)

@@ -69,3 +69,7 @@ def test_load_record(pick):
     assert pick.wins == 3
     pick.load_record()
     assert pick.wins == 8
+
+
+def test_games(pick):
+    assert len(pick.games) > 15

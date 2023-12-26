@@ -1,9 +1,9 @@
 """Unit Test wrapper for discord_bot_tester.py"""
 import math
-import pytest
-from tgfp import TGFP, TGFPPick, TGFPPlayer
-from config import get_config, Config
 from unittest.mock import MagicMock
+import pytest
+from tgfp import TGFP, TGFPPick, TGFPPlayer, TGFPTeam
+from config import get_config, Config
 
 config: Config = get_config()
 
@@ -140,3 +140,9 @@ def test_player_save(player: TGFPPlayer):
     assert new_player.first_name == "Juan"
     new_player.first_name = "John"
     new_player.save()
+
+
+def test_player_pick_history(player: TGFPPlayer):
+    assert len(player.pick_history()) > 30
+    assert isinstance(player.pick_history()[0], TGFPPick)
+

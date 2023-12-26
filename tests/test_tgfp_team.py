@@ -35,3 +35,10 @@ def test_team(tgfp_db):
     assert '_id' not in team_data
     assert 'short_name' in team_data
     assert 'discord_emoji' in team_data
+
+
+def test_find_by_name(tgfp_db):
+    teams: List[TGFPTeam] = tgfp_db.find_teams(long_name='Bills')
+    assert len(teams) == 1
+    team: TGFPTeam = teams[0]
+    assert isinstance(team, TGFPTeam)
