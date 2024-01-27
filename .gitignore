@@ -141,3 +141,4 @@ cython_debug/
 dev.env
 tst.env
 tgfp_lib.egg-info/
+db
