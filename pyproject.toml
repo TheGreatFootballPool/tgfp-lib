@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tgfp-lib"
-version = "2.7.0"
+version = "2.7.1"
 description = "The Great Football Pool Project"
 authors = ["John Sturgeon <john.sturgeon@me.com>"]
 license = "MIT"
